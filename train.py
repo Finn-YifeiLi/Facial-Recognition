@@ -2,6 +2,7 @@ import cv2
 import dlib
 import numpy
 import pickle
+import os
 predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
 face_encoder = dlib.face_recognition_model_v1('dlib_face_recognition_resnet_model_v1.dat')
 detector = dlib.get_frontal_face_detector()
@@ -23,9 +24,13 @@ def remember(img, name):
         face_encoding = face_encoder.compute_face_descriptor(image, landmarks)
         knownPeople[name] = numpy.array(face_encoding)
 
-remember('Faces/image1.jpeg', 'Elon Musk')
-remember('Faces/me.jpg', 'Li Yifei')
-remember('Faces/obama.jpeg', 'Obama')
+
+for file_name in os.listdir("Faces"):
+    if file_name == '.DS_Store':
+        continue
+    file_path = os.path.join("Faces", file_name)
+    file_name = file_name.split(".")[0]
+    remember(file_path, file_name)
 
 with open('knownPeople.pkl', 'wb') as file:
     pickle.dump(knownPeople, file)
